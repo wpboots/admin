@@ -1,0 +1,19 @@
+{
+    "name": "boots/admin",
+    "type": "boots-extension",
+    "description": "Create elegant wordpress admin pages in seconds.",
+    "keywords": ["boots","wordpress","admin","utility"],
+    "homepage": "http://wpboots.com/extensions/admin",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "M. Kamal Khan",
+            "email": "shout@bhittani.com",
+            "homepage": "http://bhittani.com",
+            "role": "Developer"
+        }
+    ],
+    "require" : {
+        "boots/form" : "dev-master"
+    }
+}
