@@ -208,7 +208,7 @@ class Boots_Admin
             ($Menu['x2']
             ? $Menu['x2']['page_title']
             : false) // $Menu['page_title']
-        ) : false;
+        ) : $Data['parent'];
 
         $Data['title'] = $Menu['label'];
 
