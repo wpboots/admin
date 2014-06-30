@@ -173,6 +173,18 @@
                 var $a = $(this);
                 var $parent = $a.parent();
                 var $icon = $('.boots-admin-icon', $parent);
+
+                if(getUserSetting('editor'))
+                {
+                    if(tinymce)
+                    {
+                        $('.boots-form-tinymce textarea.wp-editor-area').each(function(i){
+                            tinymce.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+                            tinymce.execCommand('mceAddEditor', false, $(this).attr('id'));
+                        });
+                    }
+                }
+
                 var form = $('form[name="boots_admin_form"]', self.$elem).serialize();
                 form += ('&_menu=' + self.menu_slug);
                 $.BootsAjax({
