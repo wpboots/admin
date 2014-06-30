@@ -68,19 +68,18 @@ class Boots_Admin
 
     public function scripts_and_styles()
     {
-        foreach($this->Menus as $menu)
+        foreach($this->Menus as $slug => $menu)
         {
             add_action('admin_print_styles-' . $menu['menu'], array(&$this, 'styles'));
             add_action('admin_print_scripts-' . $menu['menu'], array(&$this, 'scripts'));
-
 
             if(!has_action('admin_head', array(&$this, 'skin')))
             {
                 add_action('admin_head', array(&$this, 'skin'));
             }
 
-            do_action('boots_admin_print_styles-' . $menu['menu'], 'boots_admin');
-            do_action('boots_admin_print_scripts-' . $menu['menu'], 'boots_admin');
+            do_action('boots_admin_print_styles-' . $slug, 'boots_admin');
+            do_action('boots_admin_print_scripts-' . $slug, 'boots_admin');
         }
     }
 
@@ -94,6 +93,8 @@ class Boots_Admin
             ->done()
         ->raw_style('boots_admin')
             ->source($this->url . '/css/boots_admin.css')
+            ->requires('cssreset-context-min')
+            ->requires('boots_form')
             ->done();
     }
 
