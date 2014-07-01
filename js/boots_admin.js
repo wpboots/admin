@@ -50,10 +50,11 @@
             onReady     : function($item)
             {
                 $item.show();
-                $("select", $item).select2('destroy').select2({
+                $('select', $item).select2('destroy').select2({
                     width: 'element'
                 });
-                $item.parent().height($item.parent().height() + $item.height());
+                $('.iris', $item).iris('option', 'width', $item.width());
+                //$item.parent().height($item.parent().height() + $item.height());
             }
         },
 
