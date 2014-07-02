@@ -67,6 +67,7 @@
             // method calls
             self.which_layout();
             self.render_layout();
+            self.refresh_grid();
             self.default_tab();
             self.ev_tabs();
             self.save_options();
@@ -94,6 +95,19 @@
             {
                 $('.boots-form > ul li', self.$elem).hide();
                 $(window).load(function(){
+                    $('.boots-form > ul.active', self.$elem)
+                    .AwesomeGrid(self.grid_options);
+                });
+            }
+        },
+
+        refresh_grid : function()
+        {
+            var self = this;
+
+            if(self.layout == 'grid')
+            {
+                $('a.wp-color-result', self.$elem).on('click', function(){
                     $('.boots-form > ul.active', self.$elem)
                     .AwesomeGrid(self.grid_options);
                 });
