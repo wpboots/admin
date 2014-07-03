@@ -102,6 +102,7 @@ h2.nav-tab-wrapper {
 .boots-form.awesome-grid > ul > li {
     margin-top: 0;
     width: auto;
+    padding: 0;
 }
 .boots-form > ul > li > label {
     position: absolute;
@@ -116,6 +117,8 @@ h2.nav-tab-wrapper {
 .boots-form.awesome-grid > ul > li > .boots-form-input {
     width: auto;
     float: none;
+    padding: 14px;
+    background-color: #f6f6f6;
 }
 .boots-form > ul > li > p {
     margin-left: 320px;
@@ -123,9 +126,9 @@ h2.nav-tab-wrapper {
 }
 .boots-form > ul > li > .boots-form-input-wide + p,
 .boots-form.awesome-grid > ul > li > p {
-    margin: 21px 0 0 0;
-    padding: 21px 0 0 0;
-    border-top: 1px dashed #aaa;
+    margin: 0;
+    padding: 14px;
+    border-top: 1px solid #d7d7d7;
 }
 
 /* ---------------
