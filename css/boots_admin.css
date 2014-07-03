@@ -50,7 +50,7 @@ ul li.active a:hover {
 }
 .boots-admin .boots-admin-header
 h1 {
-    font-size: 2.0em;
+    font-size: 2em;
     line-height: 2.48em;
     margin-left: 85px;
 }
@@ -88,7 +88,7 @@ h2.nav-tab-wrapper {
 }
 .boots-form > ul > li {
     border: 1px solid #d7d7d7;
-    background-color: #fff;
+    background-color: #f0f0f0;
     -webkit-box-shadow: 0 0 10px #fff;
     -moz-box-shadow: 0 0 10px #fff;
     box-shadow: 0 0 10px #fff;

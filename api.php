@@ -66,20 +66,22 @@ class Boots_Admin
         add_action('admin_init', array(&$this, 'scripts_and_styles'));
     }
 
+    // our own little admin_print_styles/scripts-$menu hook
     public function scripts_and_styles()
     {
-        foreach($this->Menus as $slug => $menu)
+        global $pagenow;
+        $page = isset($_GET['page'])
+        ? sanitize_text_field($_GET['page'])
+        : false;
+
+        if($pagenow != 'admin.php' || !$page) return false;
+
+        if(in_array($page, array_keys($this->Menus)))
         {
-            add_action('admin_print_styles-' . $menu['menu'], array(&$this, 'styles'));
-            add_action('admin_print_scripts-' . $menu['menu'], array(&$this, 'scripts'));
-
-            if(!has_action('admin_head', array(&$this, 'skin')))
-            {
-                add_action('admin_head', array(&$this, 'skin'));
-            }
-
-            do_action('boots_admin_print_styles-' . $slug, 'boots_admin');
-            do_action('boots_admin_print_scripts-' . $slug, 'boots_admin');
+            $this->styles();
+            $this->scripts();
+            do_action('boots_admin_print_styles-' . $page, 'boots_admin');
+            do_action('boots_admin_print_scripts-' . $page, 'boots_admin');
         }
     }
 
@@ -87,12 +89,14 @@ class Boots_Admin
     {
         $this->Boots->Form->styles();
 
+        add_action('admin_head', array(&$this, 'skin'));
+
         $this->Boots->Enqueue
         ->raw_style('cssreset-context-min')
             ->source($this->url . '/css/cssreset-context-min.css')
             ->done()
         ->raw_style('boots_admin')
-            ->source($this->url . '/css/boots_admin.css')
+            ->source($this->url . '/css/boots_admin.min.css')
             ->requires('cssreset-context-min')
             ->requires('boots_form')
             ->done();
