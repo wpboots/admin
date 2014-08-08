@@ -190,7 +190,7 @@
 
                 if(getUserSetting('editor'))
                 {
-                    if(tinymce)
+                    if(typeof tinymce != 'undefined' && tinymce != null)
                     {
                         $('.boots-form-tinymce textarea.wp-editor-area').each(function(i){
                             tinymce.execCommand('mceRemoveEditor', false, $(this).attr('id'));
