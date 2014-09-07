@@ -192,7 +192,7 @@
                 {
                     if(typeof tinymce != 'undefined' && tinymce != null)
                     {
-                        $('.boots-form-tinymce textarea.wp-editor-area').each(function(i){
+                        $('.boots-form-input textarea.wp-editor-area').each(function(i){
                             tinymce.execCommand('mceRemoveEditor', false, $(this).attr('id'));
                             tinymce.execCommand('mceAddEditor', false, $(this).attr('id'));
                         });
