@@ -92,7 +92,7 @@
 
             if(self.layout == 'grid')
             {
-                $('.boots-form > ul li', self.$elem).hide();
+                $('.boots-form > ul > li', self.$elem).hide();
                 $(window).load(function(){
                     $('.boots-form > ul.active', self.$elem)
                     .AwesomeGrid(self.grid_options);
