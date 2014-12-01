@@ -69,6 +69,27 @@ h2.nav-tab-wrapper {
 }
 
 /* ---------------
+ Modal - restore
+--------------- */
+
+.boots-admin #boots_admin_restore_lb {
+    display: none;
+    padding: 21px;
+    max-width: 160px;
+    background-color: #f6f6f6;
+}
+.boots-admin #boots_admin_restore_lb h3 {
+    font-size: 16px;
+    line-height: 28px;
+}
+.boots-admin #boots_admin_restore_lb hr {
+    margin: 14px 0;
+}
+.boots-admin #boots_admin_restore_lb .js-restore-all-cancel {
+    float: right;
+}
+
+/* ---------------
     Body
 --------------- */
 

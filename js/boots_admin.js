@@ -33,6 +33,8 @@
         menu_slug           : boots_admin.menu_slug,
         action_save_options : boots_admin.action_save_options,
         nonce_save_options  : boots_admin.nonce_save_options,
+        action_restore_options : boots_admin.action_restore_options,
+        nonce_restore_options  : boots_admin.nonce_restore_options,
 
         layout : null,
 
@@ -70,6 +72,7 @@
             self.default_tab();
             self.ev_tabs();
             self.save_options();
+            self.restore_options();
         },
 
         // set the layout var
@@ -170,9 +173,54 @@
             var self = this;
 
             $('.boots-admin-header > h2 a', self.$elem).on('click', function(){
-                if(!$(this).hasClass('js-save-all'))
+                if(!$(this).hasClass('js-save-all') && !$(this).hasClass('js-restore-all'))
                 {
                     return self.switch_tab($(this));
+                }
+            });
+        },
+
+        ajax : function($a, action, nonce, reload)
+        {
+            var self = this;
+            var $parent = $a.parent();
+            var $icon = $('.boots-admin-icon', $parent);
+            if(getUserSetting('editor'))
+            {
+                if(typeof tinymce != 'undefined' && tinymce != null)
+                {
+                    $('.boots-form-input textarea.wp-editor-area').each(function(i){
+                        tinymce.execCommand('mceRemoveEditor', false, $(this).attr('id'));
+                        tinymce.execCommand('mceAddEditor', false, $(this).attr('id'));
+                    });
+                }
+            }
+            var form = $('form[name="boots_admin_form"]', self.$elem).serialize();
+            form += ('&_menu=' + self.menu_slug);
+            $.BootsAjax({
+                data : form,
+                action : action,
+                nonce : nonce,
+                beforeSend : function(){
+                    $icon.addClass('boots-admin-icon-spinner');
+                },
+                done : function(Data){
+                    if(!Data.error)
+                    {
+                        $icon.removeClass('boots-admin-icon-spinner').addClass('boots-admin-icon-tick');
+                    }
+                },
+                always : function(){
+                    setTimeout(function(){
+                        $icon
+                        .removeClass('boots-admin-icon-spinner')
+                        .removeClass('boots-admin-icon-cross')
+                        .removeClass('boots-admin-icon-tick')
+                    }, 800);
+                    if(reload)
+                    {
+                        location.reload();
+                    }
                 }
             });
         },
@@ -183,47 +231,28 @@
         {
             var self = this;
 
-            $('a.js-save-all', self.$elem).on('click', function(){
-                var $a = $(this);
-                var $parent = $a.parent();
-                var $icon = $('.boots-admin-icon', $parent);
+            $('a.js-save-all', self.$elem).on('click', function(e){
+                e.preventDefault();
+                self.ajax($(this), self.action_save_options, self.nonce_save_options);
+            });
+        },
 
-                if(getUserSetting('editor'))
-                {
-                    if(typeof tinymce != 'undefined' && tinymce != null)
-                    {
-                        $('.boots-form-input textarea.wp-editor-area').each(function(i){
-                            tinymce.execCommand('mceRemoveEditor', false, $(this).attr('id'));
-                            tinymce.execCommand('mceAddEditor', false, $(this).attr('id'));
-                        });
-                    }
-                }
+        // restore options
+        // uses $.BootsAjax()
+        restore_options : function()
+        {
+            var self = this;
 
-                var form = $('form[name="boots_admin_form"]', self.$elem).serialize();
-                form += ('&_menu=' + self.menu_slug);
-                $.BootsAjax({
-                    data : form,
-                    action : self.action_save_options,
-                    nonce : self.nonce_save_options,
-                    beforeSend : function(){
-                        $icon.addClass('boots-admin-icon-spinner');
-                    },
-                    done : function(Data){
-                        if(!Data.error)
-                        {
-                            $icon.removeClass('boots-admin-icon-spinner').addClass('boots-admin-icon-tick');
-                        }
-                    },
-                    always : function(){
-                        setTimeout(function(){
-                            $icon
-                            .removeClass('boots-admin-icon-spinner')
-                            .removeClass('boots-admin-icon-cross')
-                            .removeClass('boots-admin-icon-tick')
-                        }, 800);
-                    }
+            $('a.js-restore-all', self.$elem).on('click', function(e){
+                e.preventDefault();
+                $("#boots_admin_restore_lb").modal({
+                    fadeDuration: 200,
+                    zIndex: 999999
                 });
-                return false;
+            });
+            $('a.js-restore-all-ok', self.$elem).on('click', function(e){
+                e.preventDefault();
+                self.ajax($('a.js-restore-all', self.$elem), self.action_restore_options, self.nonce_restore_options, true);
             });
         }
     };

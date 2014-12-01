@@ -16,7 +16,10 @@
             ?>
             <span class="boots-admin-meta">
                 <span class="boots-admin-icon"></span>
-                <a href="#" class="button-primary js-save-all">Save</a>
+                <?php if(isset($Data['restore'])) : ?>
+                <a href="#" class="button-secondary js-restore-all"><?php echo $Data['restore']['restore']; ?></a>
+                <?php endif; ?>
+                <a href="#" class="button-primary js-save-all"><?php echo $Data['save']; ?></a>
             </span>
         </h2>
         <?php endif; ?>
@@ -80,7 +83,10 @@
             ?>
             <?php if(count($Data['sections']) == 1) : ?>
             <div style="margin-top: 21px;">
-                <a href="#" class="button-primary js-save-all">Save</a>
+                <?php if(isset($Data['restore'])) : ?>
+                <a href="#" class="button-secondary js-restore-all"><?php echo $Data['restore']['restore']; ?></a>
+                <?php endif; ?>
+                <a href="#" class="button-primary js-save-all"><?php echo $Data['save']; ?></a>
                 <span class="boots-admin-icon"></span>
             </div>
             <?php endif; ?>
@@ -89,5 +95,14 @@
         </form>
 
     </div>
+
+    <?php if(isset($Data['restore'])) : ?>
+    <div id="boots_admin_restore_lb">
+        <h3><?php echo $Data['restore']['confirm']; ?></h3>
+        <hr />
+        <a href="#" class="button-primary js-restore-all-ok" rel="modal:close"><?php echo $Data['restore']['ok']; ?></a>
+        <a href="#" class="button-secondary js-restore-all-cancel" rel="modal:close"><?php echo $Data['restore']['cancel']; ?></a>
+    </div>
+    <?php endif; ?>
 
 </div>

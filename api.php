@@ -28,8 +28,7 @@
  *
  */
 
-class Boots_Admin
-{
+class Boots_Admin {
     private $Boots;
     private $Settings;
 
@@ -41,6 +40,8 @@ class Boots_Admin
     private $menu_slug = null;
     private $submenu_slug = null;
     private $section = null;
+
+    private $Menus = array();
 
     public function __construct($Boots, $Args, $dir, $url)
     {
@@ -59,6 +60,20 @@ class Boots_Admin
         {
             add_action('boots_ajax_admin_save_options', array(&$this, 'ajax_save_options'));
         }
+        if(!has_action('boots_ajax_admin_restore_options', array(&$this, 'ajax_restore_options')))
+        {
+            add_action('boots_ajax_admin_restore_options', array(&$this, 'ajax_restore_options'));
+        }
+    }
+
+    private function error($msg = false)
+    {
+        if(!$msg)
+        {
+            $msg = 'Could not find any menu. ';
+            $msg .= 'Have you called <em>Admin&rarr;menu</em> ?';
+        }
+        return $msg;
     }
 
     public function init()
@@ -92,6 +107,10 @@ class Boots_Admin
         add_action('admin_head', array(&$this, 'skin'));
 
         $this->Boots->Enqueue
+        ->raw_style('jquery-modal')
+            ->source($this->url . '/third-party/modal/jquery.modal.css')
+            ->version('0.5.5')
+            ->done()
         ->raw_style('cssreset-context-min')
             ->source($this->url . '/css/cssreset-context-min.css')
             ->done()
@@ -99,6 +118,7 @@ class Boots_Admin
             ->source($this->url . '/css/boots_admin.min.css')
             ->requires('cssreset-context-min')
             ->requires('boots_form')
+            ->requires('jquery-modal')
             ->done();
     }
 
@@ -112,6 +132,11 @@ class Boots_Admin
 
         $this->Boots->Enqueue
         ->script('jquery')->done()
+        ->raw_script('jquery-modal')
+            ->source($this->url . '/third-party/modal/jquery.modal.min.js')
+            ->requires('jquery')
+            ->version('0.5.5')
+            ->done(true)
         ->raw_script('boots_admin_awesome_grid')
             ->source($this->url . '/third-party/awesome-grid/awesome-grid.min.js')
             ->requires('jquery')
@@ -123,6 +148,8 @@ class Boots_Admin
             ->vars('menu_slug', $slug)
             ->vars('action_save_options', 'admin_save_options')
             ->vars('nonce_save_options', wp_create_nonce('boots_admin_save_options'))
+            ->vars('action_restore_options', 'admin_restore_options')
+            ->vars('nonce_restore_options', wp_create_nonce('boots_admin_restore_options'))
             ->done(true);
     }
 
@@ -242,6 +269,12 @@ class Boots_Admin
 
         $Data['layout'] = $Menu['layout'];
 
+        $Data['save'] = $Menu['save'];
+        if(isset($Menu['restore']))
+        {
+            $Data['restore'] = $Menu['restore'];
+        }
+
         $rendered = apply_filters('boots_admin_template', $Data, $slug);
 
         if($rendered !== true)
@@ -276,6 +309,29 @@ class Boots_Admin
         if($this->submenu_slug)
         {
             $this->Menus[$this->submenu_slug]['layout'] = $style;
+        }
+
+        return $this;
+    }
+
+    public function restore($restore_text = 'Restore to factory', $confirm_text = 'Are you sure?', $ok_text = 'Yes', $cancel_text = 'Cancel')
+    {
+        if(!$this->menu_slug)
+        {
+            $this->Boots->error($this->error());
+            return false;
+        }
+
+        $Restore = array(
+            'restore' => $restore_text,
+            'confirm' => $confirm_text,
+            'ok'      => $ok_text,
+            'cancel'  => $cancel_text
+        );
+        $this->Menus[$this->menu_slug]['restore'] = $Restore;
+        if($this->submenu_slug)
+        {
+            $this->Menus[$this->submenu_slug]['restore'] = $Restore;
         }
 
         return $this;
@@ -396,7 +452,7 @@ class Boots_Admin
         return $this->add('_', $func);
     }
 
-    public function done()
+    public function done($save_text = 'Save')
     {
         if(!$this->menu_slug)
         {
@@ -406,6 +462,7 @@ class Boots_Admin
 
         foreach($this->Menus as $slug => & $Menu)
         {
+            $Menu['save'] = $save_text;
             if($Menu['x2'])
             {
                 $Menu['x2']['menu'] = add_menu_page(
@@ -482,13 +539,22 @@ class Boots_Admin
         die(json_encode($Response));
     }
 
-    private function error($msg = false)
+    public function ajax_restore_options($nonce)
     {
-        if(!$msg)
+        header('content-type: application/json; charset=utf-8');
+        // check for $nonce first
+        if(!wp_verify_nonce($nonce, 'boots_admin_restore_options'))
         {
-            $msg = 'Could not find any menu. ';
-            $msg .= 'Have you called <em>Admin&rarr;menu</em> ?';
+            die(json_encode(array('error'=>'insecure access')));
         }
-        return $msg;
+        // good to go
+
+        $menu = sanitize_text_field($_POST['_menu']);
+        unset($_POST['_menu']);
+
+        do_action('boots_admin_restore_options-'.$menu, $_POST);
+
+        // return response
+        die(json_encode(array('success' => true)));
     }
 }
