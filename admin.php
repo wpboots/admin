@@ -15,7 +15,8 @@
                 }
             ?>
             <span class="boots-admin-meta">
-                <span class="boots-admin-icon"></span>
+			    <span class="boots-admin-icon"></span>
+                <?php echo apply_filters('boots_admin_buttons', $slug); ?>
                 <?php if(isset($Data['restore'])) : ?>
                 <a href="#" class="button-secondary js-restore-all"><?php echo $Data['restore']['restore']; ?></a>
                 <?php endif; ?>
@@ -82,11 +83,12 @@
                 }
             ?>
             <?php if(count($Data['sections']) == 1) : ?>
-            <div style="margin-top: 21px;">
+           	<div style="margin-top: 21px;">
+                <a href="#" class="button-primary js-save-all"><?php echo $Data['save']; ?></a>
                 <?php if(isset($Data['restore'])) : ?>
                 <a href="#" class="button-secondary js-restore-all"><?php echo $Data['restore']['restore']; ?></a>
                 <?php endif; ?>
-                <a href="#" class="button-primary js-save-all"><?php echo $Data['save']; ?></a>
+                <?php echo apply_filters('boots_admin_buttons', $slug); ?>
                 <span class="boots-admin-icon"></span>
             </div>
             <?php endif; ?>
