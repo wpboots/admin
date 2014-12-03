@@ -172,11 +172,8 @@
         {
             var self = this;
 
-            $('.boots-admin-header > h2 a', self.$elem).on('click', function(){
-                if(!$(this).hasClass('js-save-all') && !$(this).hasClass('js-restore-all'))
-                {
-                    return self.switch_tab($(this));
-                }
+            $('.boots-admin-header > h2 a.nav-tab', self.$elem).on('click', function(){
+                return self.switch_tab($(this));
             });
         },
 
