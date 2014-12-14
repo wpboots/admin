@@ -64,6 +64,12 @@ h2.nav-tab-wrapper {
     padding-top: 21px;
 }
 .boots-admin .boots-admin-header
+h2.nav-tab-wrapper a:focus {
+    -webkit-box-shadow: 0 0 0 #fff;
+    -moz-box-shadow: 0 0 0 #fff;
+    box-shadow: 0 0 0 #fff;
+}
+.boots-admin .boots-admin-header
 .boots-admin-meta {
     float: right;
 }
