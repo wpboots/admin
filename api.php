@@ -43,6 +43,8 @@ class Boots_Admin {
 
     private $Menus = array();
 
+	private $did_done = false;
+
     public function __construct($Boots, $Args, $dir, $url)
     {
         $this->Boots = $Boots;
@@ -460,6 +462,11 @@ class Boots_Admin {
             return false;
         }
 
+		if($this->did_done) return $this;
+        $this->did_done = true;
+
+        $this->section = null;
+
         foreach($this->Menus as $slug => & $Menu)
         {
             $Menu['save'] = $save_text;
@@ -474,6 +481,12 @@ class Boots_Admin {
                     $Menu['x2']['icon']
                 );
             }
+
+			// Hook for adding sections, submenu
+            $this->menu_slug = $slug;
+            $this->submenu_slug = $slug;
+            do_action('boots_admin_menu-' . $slug, $this);
+
             if(!$Menu['parent'] && !$Menu['x2'])
             {
                 $Menu['menu'] = add_menu_page(
