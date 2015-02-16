@@ -3,7 +3,7 @@
  *
  * @package Boots
  * @subpackage Admin
- * @version 1.0.0
+ * @version 1.0.1
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -52,10 +52,42 @@
             onReady     : function($item)
             {
                 $item.show();
+
+                // select2
                 $('select', $item).select2('destroy').select2({
                     width: 'element'
                 });
-                $('.iris', $item).iris('option', 'width', $item.find('.boots-form-input').width());
+
+                // range
+                var $range = $('input.powerange', $item);
+                var $rangewrap = $range.parent();
+                var $rangebar = $range.next('.range-bar');
+                var $rangeQuantity = $('.range-quantity', $rangebar);
+                var $rangeHandle = $('.range-handle', $rangebar);
+                var $rangeMin = $('.range-min', $rangebar);
+                var $rangeMax = $('.range-max', $rangebar);
+                var rangeHandleWidth = $rangeHandle.width();
+                var rangValue = parseFloat($range.val());
+                var rangeMin = parseFloat($rangeMin.text());
+                var rangeMax = parseFloat($rangeMax.text());
+                var rangeWidth
+                = $rangewrap.width() - $rangeMin.width() - $rangeMax.width()
+                - 20;
+
+                var rangeHandlePos
+                = rangeWidth / (rangeMax / rangValue)
+                - (rangeHandleWidth / 2);
+
+                $rangebar.width(rangeWidth);
+                $rangeQuantity.width(rangeHandlePos);
+                $rangeHandle.css('left', (rangeHandlePos < 0 ? 0 : rangeHandlePos ) + 'px');
+                $rangeMin.css('left', -1 * $rangeMin.width() - 10);
+                $rangeMax.css('right', -1 * $rangeMax.width() - 10);
+
+                // iris
+                $('.iris', $item)
+                .iris('option', 'width', $item
+                .find('.boots-form-input').width());
             }
         },
 
@@ -110,6 +142,10 @@
             if(self.layout == 'grid')
             {
                 $('a.wp-color-result', self.$elem).on('click', function(){
+                    $('.boots-form > ul.active', self.$elem)
+                    .AwesomeGrid(self.grid_options);
+                });
+                $('.boots-form > ul.active > li .boots-form-input', self.$elem).on('resize', function(){
                     $('.boots-form > ul.active', self.$elem)
                     .AwesomeGrid(self.grid_options);
                 });
@@ -259,5 +295,3 @@
     });
 
 })(jQuery);
-
-

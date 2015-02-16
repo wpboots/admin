@@ -52,31 +52,90 @@
                     echo '<ul data-as="section" data-section="' . rawurlencode($section) . '"';
                     echo in_array($section, $Data['active'])
                     ? ' class="active">' : '>';
-                    foreach($Fields as $Field)
+                    echo "\n";
+                    foreach($Fields as $group => $Arr)
                     {
-                        if(!is_array($Field) && is_callable($Field))
+                        $type = isset($Arr['type'])
+                        ? $Arr['type'] : null;
+                        $Atts = isset($Arr['args'])
+                        ? $Arr['args'] : null;
+                        $Requires = isset($Arr['requires'])
+                        ? $Arr['requires'] : array();
+
+                        if($Atts && !is_array($Atts)) // its a custom field
                         {
-                            echo '<li>' . call_user_func($Field) . '</li>';
+                            $uniqueid = uniqid('', true);
+                            echo '<li data-id="' . $uniqueid . '">';
+                            if(is_callable($Atts))
+                            call_user_func($Atts);
+                            else echo '<i>' . $Atts . '</i> is not callable';
+                            if($Requires) include $this->dir . '/requires.php';
+                            echo '</li>';
                         }
-                        else if(is_array($Field))
+                        else if($type && $Atts) // its a single field
                         {
-                            foreach($Field as $type => $Atts)
+                            $uniqueid = uniqid(isset($Atts['name']) ? ($Atts['name'] . '-') : '', true);
+                            echo '<li data-id="' . $uniqueid . '"';
+                            echo isset($Atts['x']) && is_numeric($Atts['x'])
+                            ? (' data-x="' . $Atts['x'] . '"')
+                            : '';
+                            echo $type == 'hidden'
+                            ? ' class="boots-admin_hidden">' : ' class="clearfix">';
+                            if($type == '_') // its a custom callable field
                             {
-                                echo '<li';
-                                echo isset($Atts['x']) && is_numeric($Atts['x'])
-                                ? (' data-x="' . $Atts['x'] . '"')
-                                : '';
-                                echo $type == 'hidden'
-                                ? ' class="boots-admin_hidden">' : ' class="clearfix">';
-                                if($type == '_')
-                                {
-                                    call_user_func($Atts);
-                                }
-                                else {
-                                    echo $this->Boots->Form->generate($type, $Atts);
-                                }
-                                echo '</li>';
+                                if(is_callable($Atts))
+                                call_user_func($Atts);
+                                else echo '<i>' . $Atts . '</i> is not callable';
+                                echo  "\n";
                             }
+                            else { // its a form field
+                                echo $this->Boots->Form->generate($type, $Atts) . "\n";
+                            }
+                            if($Requires) include $this->dir . '/requires.php';
+                            echo '</li>' . "\n";
+                        }
+                        else if(!$type) // its a group
+                        {
+                            $GroupProp = isset($Data['groups'][$group])
+                            ? $Data['groups'][$group]
+                            : array();
+                            echo '<li class="clearfix"';
+                            echo isset($GroupProp['x']) && is_numeric($GroupProp['x'])
+                            ? (' data-x="' . $GroupProp['x'] . '">')
+                            : '>';
+                            echo '<label>' . $group . '</label>';
+                            foreach($Arr as $GroupArr)
+                            {
+                                $type = isset($GroupArr['type'])
+                                ? $GroupArr['type'] : null;
+                                $Atts = isset($GroupArr['args'])
+                                ? $GroupArr['args'] : null;
+                                $Requires = isset($GroupArr['requires'])
+                                ? $GroupArr['requires'] : array();
+                                if($type && $Atts)
+                                {
+                                    $uniqueid = uniqid(isset($Atts['name']) ? ($Atts['name'] . '-') : '', true);
+                                    echo '<div data-id="' . $uniqueid . '" class="boots-form-group ';
+                                    echo $type == 'hidden'
+                                    ? ' boots-admin_hidden">'
+                                    : '">';
+                                    if($type == '_') // its a custom callable field
+                                    {
+                                        if(is_callable($Atts))
+                                        call_user_func($Atts);
+                                        else echo '<i>' . $Atts . '</i> is not callable';
+                                    }
+                                    else { // its a form field
+                                        echo $this->Boots->Form->generate($type, $Atts);
+                                    }
+                                    echo '</div>' . "\n";
+                                    if($Requires) include $this->dir . '/requires.php';
+                                }
+                            }
+                            echo isset($GroupProp['help'])
+                            ? ('<p>' . $GroupProp['help'] . '</p>')
+                            : '';
+                            echo '</li>' . "\n";
                         }
                     }
                     echo '</ul>';

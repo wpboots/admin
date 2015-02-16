@@ -147,6 +147,11 @@ h2.nav-tab-wrapper a:focus {
     padding: 14px;
     background-color: #f6f6f6;
 }
+.boots-form.awesome-grid > ul > li > .boots-form-group {
+    padding: 14px;
+    background-color: #f6f6f6;
+    border-bottom: 1px solid #d7d7d7;
+}
 .boots-form > ul > li > p {
     margin-left: 320px;
     border: 0;
@@ -156,6 +161,54 @@ h2.nav-tab-wrapper a:focus {
     margin: 0;
     padding: 14px;
     border-top: 1px solid #d7d7d7;
+}
+.boots-form.awesome-grid > ul > li > .boots-form-group > p {
+    margin-top: 10px;
+}
+
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap {
+    display: flex;
+}
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap
+.range-bar {
+    margin: 15px 20px;
+    height: 4px;
+    background-color: #d7d7d7;
+}
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap
+.range-bar .range-handle {
+    cursor: pointer;
+    top: -15px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 31px;
+    font-size: 10px;
+}
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap
+.range-bar .range-max,
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap
+.range-bar .range-min {
+    display: inline-table;
+    padding-top: 2px;
+    width: auto;
+    position: relative;
+    font-size: 14px;
+}
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap
+.range-bar .range-max {
+    float: right;
+}
+.boots-form.awesome-grid > ul > li
+.boots-form-input.powerange-wrap
+.range-bar .range-min {
+    float: left;
 }
 
 /* ---------------
@@ -189,8 +242,3 @@ html[xmlns] .clearfix {
 * html .clearfix {
     height: 1%;
 }
-
-
-
-
-

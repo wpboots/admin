@@ -5,7 +5,7 @@
  *
  * @package Boots
  * @subpackage Admin
- * @version 1.0.0
+ * @version 1.0.1
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -139,14 +139,15 @@ class Boots_Admin {
             ->requires('jquery')
             ->version('0.5.5')
             ->done(true)
-        ->raw_script('boots_admin_awesome_grid')
-            ->source($this->url . '/third-party/awesome-grid/awesome-grid.min.js')
+        ->raw_script('awesome-grid')
+            ->source($this->url . '/third-party/awesome-grid/awesome-grid-1.0.2.min.js')
             ->requires('jquery')
+            ->version('1.0.2')
             ->done(true)
         ->raw_script('boots_admin')
             ->source($this->url . '/js/boots_admin.min.js')
             ->requires('boots_ajax')
-            ->requires('boots_admin_awesome_grid')
+            ->requires('awesome-grid')
             ->vars('menu_slug', $slug)
             ->vars('action_save_options', 'admin_save_options')
             ->vars('nonce_save_options', wp_create_nonce('boots_admin_save_options'))
@@ -269,6 +270,10 @@ class Boots_Admin {
             : array(key($Sections));
         }
 
+        $Data['groups'] = isset($Menu['groups'])
+        ? $Menu['groups']
+        : array();
+
         $Data['layout'] = $Menu['layout'];
 
         $Data['save'] = $Menu['save'];
@@ -374,6 +379,7 @@ class Boots_Admin {
         }
         else
         {
+            $this->Menus[$slug]['groups'] = array();
             $this->menu_slug = $slug;
         }
 
@@ -404,7 +410,23 @@ class Boots_Admin {
         return $this;
     }
 
-    public function add($field_str, $Args = array())
+    public function group($name, $args)
+    {
+        if(!$this->menu_slug)
+        {
+            $this->Boots->error($this->error());
+            return false;
+        }
+
+        $this->Menus[$this->menu_slug]['groups'] = array_merge_recursive(
+            (array) $this->Menus[$this->menu_slug]['groups'],
+            array($name => $args)
+        );
+
+        return $this;
+    }
+
+    public function add($field_str, $Args = array(), $Extras = null)
     {
         if(!$this->menu_slug)
         {
@@ -420,30 +442,93 @@ class Boots_Admin {
         $slug = $this->submenu_slug ? $this->submenu_slug : $this->menu_slug;
         $section = $this->section;
 
-        if($field_str == '_')
+        if(is_array($field_str))
         {
-            $this->Menus[$slug]['sections'][$section][] = array('_' => $Args);
+            $Extras = $Args;
         }
-        else if(is_array($field_str))
+
+        $group = false;
+        $Requires = array();
+        if($Extras !== null)
+        {
+            if(!is_array($Extras))
+            {
+                $group = $Extras;
+            }
+            else
+            {
+                $group = isset($Extras['group'])
+                ? $Extras['group'] : false;
+                $Requires = isset($Extras['requires'])
+                ? $Extras['requires'] : array();
+            }
+        }
+
+        if(is_array($field_str))
         {
             foreach($field_str as $Field)
             {
                 if(!is_array($Field) || (!isset($Field['_'])))
                 {
-                    $this->Menus[$slug]['sections'][$section][] = array('_' => $Field);
+                    if($group !== false)
+                    {
+                        $this->Menus[$slug]['sections'][$section][$group][] = array(
+                            'type' => '_',
+                            'args' => $Field,
+                            'requires' => $Requires
+                        );
+                    }
+                    else
+                    {
+                        $this->Menus[$slug]['sections'][$section][] = array(
+                            'type' => '_',
+                            'args' => $Field,
+                            'requires' => $Requires
+                        );
+                    }
                 }
                 else
                 {
                     $f = $Field['_'];
                     unset($Field['_']);
                     $args = $Field;
-                    $this->Menus[$slug]['sections'][$section][] = array($f => $args);
+                    if($group !== false)
+                    {
+                        $this->Menus[$slug]['sections'][$section][$group][] = array(
+                            'type' => $f,
+                            'args' => $args,
+                            'requires' => $Requires
+                        );
+                    }
+                    else
+                    {
+                        $this->Menus[$slug]['sections'][$section][] = array(
+                            'type' => $f,
+                            'args' => $args,
+                            'requires' => $Requires
+                        );
+                    }
                 }
             }
         }
         else
         {
-            $this->Menus[$slug]['sections'][$section][] = array($field_str => $Args);
+            if($group !== false)
+            {
+                $this->Menus[$slug]['sections'][$section][$group][] = array(
+                    'type' => $field_str,
+                    'args' => $Args,
+                    'requires' => $Requires
+                );
+            }
+            else
+            {
+                $this->Menus[$slug]['sections'][$section][] = array(
+                    'type' => $field_str,
+                    'args' => $Args,
+                    'requires' => $Requires
+                );
+            }
         }
 
         return $this;
