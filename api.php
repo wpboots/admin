@@ -43,8 +43,6 @@ class Boots_Admin {
 
     private $Menus = array();
 
-	private $did_done = false;
-
     public function __construct($Boots, $Args, $dir, $url)
     {
         $this->Boots = $Boots;
@@ -370,7 +368,8 @@ class Boots_Admin {
             'active_s'   => array(),
             'layout'     => 'default',
             'parent'     => $parent,
-            'x2'         => $x2
+            'x2'         => $x2,
+            'done'       => false
         );
 
         if($parent)
@@ -547,13 +546,14 @@ class Boots_Admin {
             return false;
         }
 
-		if($this->did_done) return $this;
-        $this->did_done = true;
-
+        // section set to null
+        // so that action does not conflict
         $this->section = null;
 
         foreach($this->Menus as $slug => & $Menu)
         {
+            if($Menu['done']) continue;
+
             $Menu['save'] = $save_text;
             if($Menu['x2'])
             {
@@ -594,6 +594,7 @@ class Boots_Admin {
                     array(&$this, 'render')
                 );
             }
+            $Menu['done'] = true;
         }
 
         $this->menu_slug = null;

@@ -16,7 +16,7 @@
             ?>
             <span class="boots-admin-meta">
 			    <span class="boots-admin-icon"></span>
-                <?php echo apply_filters('boots_admin_buttons', $slug); ?>
+                <?php echo apply_filters('boots_admin_buttons', apply_filters('boots_admin_buttons_'.$slug, ''), $slug); ?>
                 <?php if(isset($Data['restore'])) : ?>
                 <a href="#" class="button-secondary js-restore-all"><?php echo $Data['restore']['restore']; ?></a>
                 <?php endif; ?>
@@ -147,7 +147,7 @@
                 <?php if(isset($Data['restore'])) : ?>
                 <a href="#" class="button-secondary js-restore-all"><?php echo $Data['restore']['restore']; ?></a>
                 <?php endif; ?>
-                <?php echo apply_filters('boots_admin_buttons', $slug); ?>
+                <?php echo apply_filters('boots_admin_buttons', apply_filters('boots_admin_buttons_'.$slug, ''), $slug); ?>
                 <span class="boots-admin-icon"></span>
             </div>
             <?php endif; ?>
