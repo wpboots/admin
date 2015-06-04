@@ -3,9 +3,13 @@
 (function($){
     var conds = [
         <?php $_comma = ''; foreach($Requires as $rf => $rv) : ?>
-        <?php echo $_comma; ?>{
+        <?php
+            echo $_comma;
+            $rv = is_array($rv) ? ("['" . implode("','", $rv) . "']") : "['$rv']";
+        ?>
+        {
             el : '<?php echo $rf; ?>',
-            val : '<?php echo $rv; ?>'
+            val : <?php echo $rv; ?>
         }
         <?php $_comma = ', '; endforeach; ?>
     ];
