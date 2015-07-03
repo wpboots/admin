@@ -5,7 +5,7 @@
  *
  * @package Boots
  * @subpackage Admin
- * @version 1.0.1
+ * @version 1.0.4
  * @license GPLv2
  *
  * Boots - The missing WordPress framework. http://wpboots.com
@@ -417,10 +417,10 @@ class Boots_Admin {
             return false;
         }
 
-        $this->Menus[$this->menu_slug]['groups'] = array_merge_recursive(
-            (array) $this->Menus[$this->menu_slug]['groups'],
-            array($name => $args)
-        );
+		$this->Menus[$this->menu_slug]['groups'] = array_merge_recursive(
+	        (array) $this->Menus[$this->menu_slug]['groups'],
+	        array($name => is_array($args) ? $args : array('help' => $args))
+	    );
 
         return $this;
     }
